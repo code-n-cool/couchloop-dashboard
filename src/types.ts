@@ -10,4 +10,5 @@ export type ProcessedPoint = {
   score: number;
   rolling?: number;
   isAnomaly?: boolean;
-};
+  note?: string;
+}
