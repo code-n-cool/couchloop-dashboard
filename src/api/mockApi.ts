@@ -14,13 +14,11 @@ export async function fetchMockMoodEntries(days = 180, latency = 400): Promise<M
 
   for (let i = 0; i < days; i++) {
     const d = subDays(today, i);
-    // create a gentle weekly seasonality + noise
     const weekly = Math.sin(i / 7) * 0.6;
     const base = 3 + weekly;
     const noise = rand(-0.9, 0.9);
     let score = Math.round(Math.max(1, Math.min(5, base + noise)));
 
-    // inject occasional anomalies
     if (Math.random() < 0.02) score = Math.round(Math.random() < 0.5 ? 1 : 5);
 
     out.push({
@@ -31,6 +29,5 @@ export async function fetchMockMoodEntries(days = 180, latency = 400): Promise<M
     });
   }
 
-  // return in ascending date order
-  return out.reverse();
+  return out.reverse(); // ascending order
 }

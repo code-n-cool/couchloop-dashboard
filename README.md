@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# Emotion Trend Visualization (Clinician Dashboard)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a **clinician-focused dashboard** for visualizing mood-over-time data. It uses React and charting libraries (D3.js and Recharts) to help clinicians observe trends, anomalies, and weekly summaries in patients' mood data. The project includes a mock API for testing and demonstration purposes.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Project Structure
+    src/
+    ├── api/
+    │ └── mockapi.ts # Mock data generation
+    ├── components/
+    │ ├── D3MoodChartStyled.tsx # Custom D3.js chart component
+    │ ├── RechartsMoodChartStyled.tsx # Recharts chart component
+    │ ├── MuiDateRange.tsx # MUI date range picker
+    │ └── SummaryCard.tsx # Weekly summary and anomaly card
+    ├── hooks/
+    │ └── useMoodData.ts # Hook to fetch and process mood entries
+    ├── utils/
+    │ └── analysis.ts # Functions for rolling averages, weekly stats, anomaly detection
+    └── App.tsx # Main dashboard component
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Key Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Dual Charting Approach**
+   - **D3.js**: Fully customized, interactive chart with gradient fills, background bands for context, rolling averages, and anomaly markers.
+   - **Recharts**: Simplified and responsive chart alternative with similar functionality for comparison or fallback.
 
-### `npm test`
+2. **Date Filtering**
+   - Users can select a **custom date range** using a Material UI date picker.
+   - Charts and weekly summaries update dynamically based on the selected range.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. **Weekly Summaries & Trends**
+   - The `SummaryCard` component shows weekly averages with intuitive emojis.
+   - Displays trend delta between first and last week.
+   - Highlights anomaly counts to catch sudden mood changes.
 
-### `npm run build`
+4. **Anomaly Detection**
+   - Occasional random anomalies are injected in the mock data to simulate extreme mood events.
+   - Both charts highlight anomalies for easy visual inspection.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. **Accessibility Considerations**
+   - Color bands have subtle opacity to avoid overwhelming users.
+   - Tooltips are readable and positioned dynamically.
+   - Components use semantic MUI elements and proper sizing.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Mock API
 
-### `npm run eject`
+- File: `src/api/mockapi.ts`
+- Generates mood entries for the past `N` days (default 180) with:
+  - **Score range:** 1–5 (integer)
+  - **Weekly seasonality:** Simulates gentle weekly mood cycles
+  - **Random noise:** Adds variation to emulate real-life mood fluctuations
+  - **Occasional anomalies:** 2% chance of extreme scores to flag unusual events
+  - **Optional manual notes:** 5% chance of textual note
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```ts
+const entries = await fetchMockMoodEntries(180);
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Modules & Libraries Used
+| Module | Purpose |
+|--------|---------|
+| React | Base framework for building interactive UI |
+| D3.js | Custom, flexible charting for advanced visualization |
+| Recharts | Quick and responsive charting alternative |
+| @mui/material & @mui/x-date-pickers | UI components including date pickers and cards |
+| date-fns | Date manipulation (formatting, parsing, offsets) |
+| TypeScript | Strong typing for safer, clearer code |
+| ES Modules | Modern module organization for clean imports/exports |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## How to Run
+1. Install dependencies
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Start the development server
+```bash
+npm run dev
+```
 
-## Learn More
+3. Open http://localhost:3000 to view the dashboard.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Summary
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project demonstrates a clinician-oriented mental health dashboard with:
 
-### Code Splitting
+- Interactive, visually informative charts
+- Weekly trend summaries
+- Customizable date filters
+- Synthetic yet realistic mood data
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### SummaryCard – Mood Icons
 
-### Analyzing the Bundle Size
+The `SummaryCard` component displays weekly mood averages with emoji icons for quick interpretation:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+| Score Range | Icon | Meaning |
+|------------|------|--------|
+| 4–5        | 😊    | Positive / Good mood |
+| 3–4        | 😐    | Neutral / Average mood |
+| 1–3        | ☔️    | Low / Negative mood |
 
-### Making a Progressive Web App
+These icons help clinicians quickly identify emotional trends without needing to interpret raw numbers.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### Notes on Accessibility:
+- Each icon is accompanied by the numeric average, so screen readers can still convey the information.
+- Color and icon combinations are chosen to be intuitive and distinguishable, even for users with mild color vision deficiencies.
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This approach supports mental health monitoring by providing an at-a-glance summary of mood trends, making it easier to identify periods of concern or improvement.

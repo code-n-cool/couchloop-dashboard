@@ -63,3 +63,13 @@ export function detectStreaks(entries: MoodEntry[], threshold = 4) {
   if (currentLen > 0 && currentStart) streaks.push({ start: currentStart, end: entries[entries.length - 1].date, length: currentLen });
   return streaks;
 }
+
+export function processMoodEntries(entries: MoodEntry[]): ProcessedPoint[] {
+  // Example: compute rolling averages and detect anomalies
+  return entries.map((entry, i, arr) => {
+    const window = arr.slice(Math.max(0, i - 6), i + 1); // 7-day rolling
+    const rolling = window.reduce((sum, e) => sum + e.score, 0) / window.length;
+    const isAnomaly = entry.score === 1 || entry.score === 5; // simple example
+    return { ...entry, rolling, isAnomaly };
+  });
+}
