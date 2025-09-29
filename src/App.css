@@ -1,3 +1,26 @@
-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 0; }
-.App { max-width: 1000px; margin: 0 auto; }
-.summary-bar { display:flex; gap:16px; padding:12px 0; border-bottom: 1px solid #eee; align-items:center; }
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin: 0;
+}
+
+.App {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.summary-bar {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+body {
+    background: #FAFBFB;
+    color: #222831;
+}
+
+.recharts-surface {
+    font-family: inherit;
+}

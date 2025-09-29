@@ -1,50 +1,52 @@
 import React, { useMemo, useState } from "react";
-import useMoodData from "./hooks/useMoodData";
-import RechartsMoodChart from "./components/RechartsMoodChart";
-import D3MoodChart from "./components/D3MoodChart";
-import SummaryBar from "./components/SummaryBar";
-import DateRangePicker from "./components/DateRangePicker";
+import { Container, Box, Typography, Paper } from "@mui/material";
+import useMoodData from "./hooks/useMoodData"; // your hook
+import SummaryCard from "./components/SummaryCard";
+import MuiDateRangeFallback from "./components/MuiDateRange"; // use fallback or MuiDateRange
+import RechartsMoodChartStyled from "./components/RechartsMoodChartStyled";
+import D3MoodChartStyled from "./components/D3MoodChartStyled";
 import { weeklyAverages } from "./utils/analysis";
-import "./App.css";
 
-function App() {
+export default function App() {
   const { raw, points, loading } = useMoodData(180);
-  const [from, setFrom] = useState<string>(""); // yyyy-mm-dd
-  const [to, setTo] = useState<string>("");
+  const [from, setFrom] = useState<Date | null>(null);
+  const [to, setTo] = useState<Date | null>(null);
 
-  const filteredPoints = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!points) return null;
     if (!from && !to) return points;
     return points.filter(p => {
-      if (from && p.date < from) return false;
-      if (to && p.date > to) return false;
+      if (from && new Date(p.date) < from) return false;
+      if (to && new Date(p.date) > to) return false;
       return true;
     });
   }, [points, from, to]);
 
-  const weekly = raw ? weeklyAverages(raw, 4) : [];
-
   if (loading || !points || !raw) return <div>Loading...</div>;
 
-  // quick anomaly count
-  const anomaliesCount = filteredPoints?.filter(p=>p.isAnomaly).length ?? 0;
+  const weekly = weeklyAverages(raw, 4);
+  const anomaliesCount = (filtered ?? points).filter(p => p.isAnomaly).length;
+  const trendDelta = (weekly[weekly.length-1]?.avg ?? 0) - (weekly[0]?.avg ?? 0);
 
   return (
-    <div className="App" style={{ padding: 20 }}>
-      <h1>Clinician: Emotion Trend Dashboard</h1>
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <DateRangePicker from={from} to={to} onChange={(f,t)=>{ setFrom(f); setTo(t); }} />
-      </div>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Typography variant="h1" gutterBottom>Clinician: Emotion Trend Dashboard</Typography>
 
-      <SummaryBar weekly={weekly} anomaliesCount={anomaliesCount} />
+      <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+        <MuiDateRangeFallback from={from} to={to} onFromChange={setFrom} onToChange={setTo} />
+      </Box>
 
-      <h2>Recharts view</h2>
-      {filteredPoints && <RechartsMoodChart data={filteredPoints} />}
+      <SummaryCard weekly={weekly} trendDelta={trendDelta} anomalies={anomaliesCount} />
 
-      <h2>D3 view (bespoke)</h2>
-      {filteredPoints && <D3MoodChart data={filteredPoints} />}
-    </div>
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h2" sx={{ mb: 1 }}>Recharts view</Typography>
+        <RechartsMoodChartStyled data={filtered ?? points} />
+      </Paper>
+
+      <Paper sx={{ p: 2 }}>
+        <Typography variant="h2" sx={{ mb: 1 }}>D3 view (bespoke)</Typography>
+        <D3MoodChartStyled data={filtered ?? points} />
+      </Paper>
+    </Container>
   );
 }
-
-export default App;
